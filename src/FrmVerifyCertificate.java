@@ -13,7 +13,7 @@ public class FrmVerifyCertificate extends JFrame {
 
     FrmVerifyCertificate(){
         setTitle("Verify Certificate");
-        setSize(550, 700);
+        setSize(275, 230);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);

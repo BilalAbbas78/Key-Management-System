@@ -32,7 +32,6 @@ public class CertificateGenerator {
         Security.addProvider(new BouncyCastleProvider());
 
         SimpleDateFormat parser = new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy");
-//        Date date = parser.parse(input);
         Date fromDate = parser.parse(from);
         Date toDate = parser.parse(to);
 
@@ -95,9 +94,13 @@ public class CertificateGenerator {
         os2.close();
     }
 
-    public static X509Certificate generateCertificateSignedX509Certificate(String clientName, String clientSubject, int serialNumber, PrivateKey issuerPrivateKey) throws CertificateEncodingException, InvalidKeyException, IllegalStateException,
-            NoSuchProviderException, NoSuchAlgorithmException, SignatureException {
+    public static X509Certificate generateCertificateSignedX509Certificate(String clientName, String clientSubject, int serialNumber, PrivateKey issuerPrivateKey, String from, String to) throws CertificateEncodingException, InvalidKeyException, IllegalStateException,
+            NoSuchProviderException, NoSuchAlgorithmException, SignatureException, ParseException {
         Security.addProvider(new BouncyCastleProvider());
+
+        SimpleDateFormat parser = new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy");
+        Date fromDate = parser.parse(from);
+        Date toDate = parser.parse(to);
 
         // generate a key pair
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", "BC");
@@ -112,9 +115,9 @@ public class CertificateGenerator {
         certGen.setIssuerDN(new X500Principal("CN=" + clientName)); // use the same
         certGen.setSubjectDN(new X509Name("DN=" + clientSubject));
         // yesterday
-        certGen.setNotBefore(new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000));
+        certGen.setNotBefore(fromDate);
         // in 2 years
-        certGen.setNotAfter(new Date(System.currentTimeMillis() + 2L * 365 * 24 * 60 * 60 * 1000));
+        certGen.setNotAfter(toDate);
         certGen.setPublicKey(keyPair.getPublic());
         publicKey = keyPair.getPublic();
         certGen.setSignatureAlgorithm("SHA256WithRSAEncryption");

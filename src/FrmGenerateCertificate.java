@@ -12,6 +12,7 @@ import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.text.ParseException;
 import java.util.Properties;
 
 public class FrmGenerateCertificate extends JFrame {
@@ -23,7 +24,7 @@ public class FrmGenerateCertificate extends JFrame {
 
     FrmGenerateCertificate(){
         setTitle("Generate Certificate");
-        setSize(550, 700);
+        setSize(550, 450);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -114,12 +115,32 @@ public class FrmGenerateCertificate extends JFrame {
         txtClientSubject.setBounds(300, 80, 190, 30);
         add(txtClientSubject);
 
+        JLabel lblClientFromDate = new JLabel("From Date");
+        lblClientFromDate.setBounds(300, 110, 190, 30);
+        add(lblClientFromDate);
+
+        UtilDateModel model2 = new UtilDateModel();
+        JDatePanelImpl datePanel2 = new JDatePanelImpl(model2, new Properties());
+        JDatePickerImpl datePicker2 = new JDatePickerImpl(datePanel2, new DateLabelFormatter());
+        datePicker2.setBounds(300, 140, 120, 30);
+        add(datePicker2);
+
+        JLabel lblClientToDate = new JLabel("To Date");
+        lblClientToDate.setBounds(300, 170, 190, 30);
+        add(lblClientToDate);
+
+        UtilDateModel model3 = new UtilDateModel();
+        JDatePanelImpl datePanel3 = new JDatePanelImpl(model3, new Properties());
+        JDatePickerImpl datePicker3 = new JDatePickerImpl(datePanel3, new DateLabelFormatter());
+        datePicker3.setBounds(300, 200, 120, 30);
+        add(datePicker3);
+
         JButton btnGenerateClientCertificate = new JButton("Generate Client Certificate");
-        btnGenerateClientCertificate.setBounds(300, 180, 190, 30);
+        btnGenerateClientCertificate.setBounds(300, 240, 190, 30);
         add(btnGenerateClientCertificate);
 
         JButton btnExportClientCertificate = new JButton("Export Client Certificate");
-        btnExportClientCertificate.setBounds(300, 220, 190, 30);
+        btnExportClientCertificate.setBounds(300, 280, 190, 30);
         add(btnExportClientCertificate);
 
         JButton btnBack = new JButton("Back");
@@ -135,12 +156,12 @@ public class FrmGenerateCertificate extends JFrame {
                     JOptionPane.showMessageDialog(this, "Please Generate Root Certificate First", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     try {
-                        certificateSignedX509Certificate = CertificateGenerator.generateCertificateSignedX509Certificate(selfSignedX509Certificate.getIssuerX500Principal().getName().replace("CN=", ""), txtClientSubject.getText(), serialNumber, CertificateGenerator.privateKey);
+                        certificateSignedX509Certificate = CertificateGenerator.generateCertificateSignedX509Certificate(selfSignedX509Certificate.getIssuerX500Principal().getName().replace("CN=", ""), txtClientSubject.getText(), serialNumber, CertificateGenerator.privateKey, datePicker2.getModel().getValue().toString(), datePicker3.getModel().getValue().toString());
                         serialNumber++;
                         JOptionPane.showMessageDialog(this, "Client Certificate Generated Successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
 //                    System.out.println(certificateSignedX509Certificate);
                     } catch (CertificateEncodingException | InvalidKeyException | NoSuchProviderException |
-                             NoSuchAlgorithmException | SignatureException ex) {
+                             NoSuchAlgorithmException | SignatureException | ParseException ex) {
                         JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                         throw new RuntimeException(ex);
                     }
