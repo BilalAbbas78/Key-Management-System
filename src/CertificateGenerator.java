@@ -15,6 +15,8 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Date;
 
 @SuppressWarnings("ALL")
@@ -23,7 +25,7 @@ public class CertificateGenerator {
     static PublicKey publicKey;
     static PrivateKey privateKey;
 
-    public static X509Certificate generateSelfSignedX509Certificate(String issuerName, String issuerSubject) throws CertificateEncodingException, InvalidKeyException, IllegalStateException,
+    public static X509Certificate generateSelfSignedX509Certificate(String issuerName) throws CertificateEncodingException, InvalidKeyException, IllegalStateException,
             NoSuchProviderException, NoSuchAlgorithmException, SignatureException {
         Security.addProvider(new BouncyCastleProvider());
 
@@ -38,7 +40,7 @@ public class CertificateGenerator {
         // add some options
         certGen.setSerialNumber(BigInteger.valueOf(System.currentTimeMillis()));
         certGen.setIssuerDN(new X500Principal("CN=" + issuerName)); // use the same
-        certGen.setSubjectDN(new X509Name("DN=" + issuerSubject));
+        certGen.setSubjectDN(new X509Name("DN=" + issuerName));
         // yesterday
         certGen.setNotBefore(new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000));
         // in 2 years
@@ -64,7 +66,7 @@ public class CertificateGenerator {
 
     }
 
-    public static void verifyCertificate (X509Certificate certificate, PublicKey publicKey){
+    public static void verifyCertificate(X509Certificate certificate, PublicKey publicKey) {
         try {
             certificate.verify(publicKey);
             JOptionPane.showMessageDialog(null, "Certificate is valid");
@@ -74,12 +76,16 @@ public class CertificateGenerator {
         }
     }
 
-    public static void exportCertificate(X509Certificate selfSignedX509Certificate, String filePath) throws CertificateEncodingException, IOException {
-        final FileOutputStream os = new FileOutputStream(filePath +  ".cer");
+    public static void exportCertificate(X509Certificate certificate, String filePath) throws CertificateEncodingException, IOException {
+        final FileOutputStream os = new FileOutputStream(filePath + ".cer");
         os.write("-----BEGIN CERTIFICATE-----\n".getBytes("US-ASCII"));
-        os.write(Base64.encode(selfSignedX509Certificate.getEncoded()));
+        os.write(Base64.encode(certificate.getEncoded()));
         os.write("-----END CERTIFICATE-----\n".getBytes("US-ASCII"));
         os.close();
+
+        final FileOutputStream os2 = new FileOutputStream(filePath + "PublicKey.txt");
+        os2.write(Base64.encode(publicKey.getEncoded()));
+        os2.close();
     }
 
     public static X509Certificate generateCertificateSignedX509Certificate(String clientName, String clientSubject, int serialNumber, PrivateKey issuerPrivateKey) throws CertificateEncodingException, InvalidKeyException, IllegalStateException,
@@ -112,7 +118,42 @@ public class CertificateGenerator {
         return certGen.generate(issuerPrivateKey, "BC");
     }
 
+    public static PublicKey loadPublicKey(File selectedFile) {
+        try {
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+            X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(new FileInputStream(selectedFile));
+            return certificate.getPublicKey();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
 //    public void addBouncyCastleAsSecurityProvider() {
 //        Security.addProvider(new BouncyCastleProvider());
 //    }
+        return null;
+    }
+
+    public static X509Certificate loadCertificate(File selectedFile) {
+        try {
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+            X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(new FileInputStream(selectedFile));
+            return certificate;
+        } catch (CertificateException | FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static PublicKey getPublicKeyFromString(String content) {
+        try {
+            byte[] bytes = Base64.decode(content);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            return keyFactory.generatePublic(new X509EncodedKeySpec(bytes));
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

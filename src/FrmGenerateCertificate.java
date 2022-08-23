@@ -1,3 +1,8 @@
+import org.jdatepicker.DateLabelFormatter;
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
@@ -7,6 +12,7 @@ import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.Properties;
 
 public class FrmGenerateCertificate extends JFrame {
 
@@ -27,38 +33,50 @@ public class FrmGenerateCertificate extends JFrame {
         lblRootCertificate.setBounds(25, 10, 190, 30);
         add(lblRootCertificate);
 
-        JLabel lblRootEmail = new JLabel("Root Email");
-        lblRootEmail.setBounds(25, 50, 190, 30);
-        add(lblRootEmail);
+        JLabel lblIssuer = new JLabel("Issuer Name");
+        lblIssuer.setBounds(25, 50, 190, 30);
+        add(lblIssuer);
 
-        JTextField txtRootEmail = new JTextField();
-        txtRootEmail.setBounds(25, 80, 190, 30);
-        add(txtRootEmail);
+        JTextField txtIssuer = new JTextField();
+        txtIssuer.setBounds(25, 80, 190, 30);
+        add(txtIssuer);
 
-        JLabel lblRootSubject = new JLabel("Root Subject");
-        lblRootSubject.setBounds(25, 110, 190, 30);
-        add(lblRootSubject);
+        JLabel lblIssuerFromDate = new JLabel("From Date");
+        lblIssuerFromDate.setBounds(25, 110, 190, 30);
+        add(lblIssuerFromDate);
 
-        JTextField txtRootSubject = new JTextField();
-        txtRootSubject.setBounds(25, 140, 190, 30);
-        add(txtRootSubject);
+        UtilDateModel model = new UtilDateModel();
+        JDatePanelImpl datePanel = new JDatePanelImpl(model, new Properties());
+        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        datePicker.setBounds(25, 140, 120, 30);
+        add(datePicker);
+
+        JLabel lblIssuerToDate = new JLabel("To Date");
+        lblIssuerToDate.setBounds(25, 170, 190, 30);
+        add(lblIssuerToDate);
+
+        UtilDateModel model1 = new UtilDateModel();
+        JDatePanelImpl datePanel1 = new JDatePanelImpl(model1, new Properties());
+        JDatePickerImpl datePicker1 = new JDatePickerImpl(datePanel1, new DateLabelFormatter());
+        datePicker1.setBounds(25, 200, 120, 30);
+        add(datePicker1);
 
         JButton btnGenerateRootCertificate = new JButton("Generate Root Certificate");
-        btnGenerateRootCertificate.setBounds(25, 180, 190, 30);
+        btnGenerateRootCertificate.setBounds(25, 240, 190, 30);
         add(btnGenerateRootCertificate);
 
         JButton btnExportRootCertificate = new JButton("Export Root Certificate");
-        btnExportRootCertificate.setBounds(25, 220, 190, 30);
+        btnExportRootCertificate.setBounds(25, 280, 190, 30);
         add(btnExportRootCertificate);
 
         btnGenerateRootCertificate.addActionListener(e -> {
 
-            if (txtRootEmail.getText().trim().isEmpty() || txtRootSubject.getText().trim().isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Please fill all fields");
+            if (txtIssuer.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Please fill all the fields");
             }
             else {
                 try {
-                    selfSignedX509Certificate = CertificateGenerator.generateSelfSignedX509Certificate(txtRootEmail.getText(), txtRootSubject.getText());
+                    selfSignedX509Certificate = CertificateGenerator.generateSelfSignedX509Certificate(txtIssuer.getText().trim());
                     serialNumber = 1;
                     JOptionPane.showMessageDialog(this, "Root Certificate Generated Successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
 //                System.out.println(selfSignedX509Certificate);
@@ -88,20 +106,12 @@ public class FrmGenerateCertificate extends JFrame {
         lblClientCertificate.setBounds(300, 10, 190, 30);
         add(lblClientCertificate);
 
-        JLabel lblClientEmail = new JLabel("Client Email");
-        lblClientEmail.setBounds(300, 50, 190, 30);
-        add(lblClientEmail);
-
-        JTextField txtClientEmail = new JTextField();
-        txtClientEmail.setBounds(300, 80, 190, 30);
-        add(txtClientEmail);
-
-        JLabel lblClientSubject = new JLabel("Client Subject");
-        lblClientSubject.setBounds(300, 110, 190, 30);
+        JLabel lblClientSubject = new JLabel("Client Name");
+        lblClientSubject.setBounds(300, 50, 190, 30);
         add(lblClientSubject);
 
         JTextField txtClientSubject = new JTextField();
-        txtClientSubject.setBounds(300, 140, 190, 30);
+        txtClientSubject.setBounds(300, 80, 190, 30);
         add(txtClientSubject);
 
         JButton btnGenerateClientCertificate = new JButton("Generate Client Certificate");
@@ -113,24 +123,27 @@ public class FrmGenerateCertificate extends JFrame {
         add(btnExportClientCertificate);
 
         JButton btnBack = new JButton("Back");
-        btnBack.setBounds(170, 280, 150, 30);
+        btnBack.setBounds(170, 320, 150, 30);
         add(btnBack);
 
         btnGenerateClientCertificate.addActionListener(e -> {
 
-            if (txtClientEmail.getText().trim().isEmpty() || txtClientSubject.getText().trim().isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Please fill all fields");
+            if (txtClientSubject.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Please fill all the fields");
             } else {
-                try {
-                    certificateSignedX509Certificate = CertificateGenerator.generateCertificateSignedX509Certificate(txtClientEmail.getText(), txtClientSubject.getText(), serialNumber, CertificateGenerator.privateKey);
-                    serialNumber++;
-                    JOptionPane.showMessageDialog(this, "Client Certificate Generated Successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-                    System.out.println(certificateSignedX509Certificate);
-                }
-                catch (CertificateEncodingException | InvalidKeyException | NoSuchProviderException |
-                       NoSuchAlgorithmException | SignatureException ex) {
-                    JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    throw new RuntimeException(ex);
+                if (selfSignedX509Certificate == null) {
+                    JOptionPane.showMessageDialog(this, "Please Generate Root Certificate First", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    try {
+                        certificateSignedX509Certificate = CertificateGenerator.generateCertificateSignedX509Certificate(selfSignedX509Certificate.getIssuerX500Principal().getName().replace("CN=", ""), txtClientSubject.getText(), serialNumber, CertificateGenerator.privateKey);
+                        serialNumber++;
+                        JOptionPane.showMessageDialog(this, "Client Certificate Generated Successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+//                    System.out.println(certificateSignedX509Certificate);
+                    } catch (CertificateEncodingException | InvalidKeyException | NoSuchProviderException |
+                             NoSuchAlgorithmException | SignatureException ex) {
+                        JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        throw new RuntimeException(ex);
+                    }
                 }
             }
         });
@@ -156,7 +169,7 @@ public class FrmGenerateCertificate extends JFrame {
             // parent component of the dialog
             JFrame parentFrame = new JFrame();
 
-            JFileChooser fileChooser = new JFileChooser();
+            JFileChooser fileChooser = new JFileChooser(System.getProperty("user.home") + "\\Desktop");
             fileChooser.setDialogTitle("Specify a file to save");
             fileChooser.setAcceptAllFileFilterUsed(false);
             FileNameExtensionFilter filter = new FileNameExtensionFilter("Certificate File", "cer");
@@ -166,7 +179,7 @@ public class FrmGenerateCertificate extends JFrame {
 
             if (userSelection == JFileChooser.APPROVE_OPTION) {
                 File fileToSave = fileChooser.getSelectedFile();
-                System.out.println("Save as file: " + fileToSave.getAbsolutePath());
+//                System.out.println("Save as file: " + fileToSave.getAbsolutePath());
 
                 CertificateGenerator.exportCertificate(certificate, fileToSave.getAbsolutePath());
                 JOptionPane.showMessageDialog(this, "Root Certificate Exported Successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -180,6 +193,7 @@ public class FrmGenerateCertificate extends JFrame {
             JOptionPane.showMessageDialog(this, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     public static void main(String[] args) {
         new FrmGenerateCertificate().setVisible(true);
