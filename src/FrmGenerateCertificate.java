@@ -1,12 +1,19 @@
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SignatureException;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
 public class FrmGenerateCertificate extends JFrame {
 
     //    CertificateGenerator issuerCertificate = new CertificateGenerator();
     X509Certificate selfSignedX509Certificate;
+    X509Certificate certificateSignedX509Certificate;
+    static int serialNumber = 1;
 
     FrmGenerateCertificate(){
         setTitle("Generate Certificate");
@@ -48,9 +55,11 @@ public class FrmGenerateCertificate extends JFrame {
 
             if (txtRootEmail.getText().trim().isEmpty() || txtRootSubject.getText().trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Please fill all fields");
-            } else {
+            }
+            else {
                 try {
                     selfSignedX509Certificate = CertificateGenerator.generateSelfSignedX509Certificate(txtRootEmail.getText(), txtRootSubject.getText());
+                    serialNumber = 1;
                     JOptionPane.showMessageDialog(this, "Root Certificate Generated Successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
 //                System.out.println(selfSignedX509Certificate);
                 }
@@ -64,44 +73,12 @@ public class FrmGenerateCertificate extends JFrame {
         });
 
         btnExportRootCertificate.addActionListener(e -> {
-
             if (selfSignedX509Certificate == null) {
                 JOptionPane.showMessageDialog(this, "Please Generate Root Certificate First", "Error", JOptionPane.ERROR_MESSAGE);
             }
             else {
-                try {
-                    // parent component of the dialog
-                    JFrame parentFrame = new JFrame();
-
-                    JFileChooser fileChooser = new JFileChooser();
-                    fileChooser.setDialogTitle("Specify a file to save");
-//                    fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Certificate File", "cer"));
-                    fileChooser.setAcceptAllFileFilterUsed(false);
-                    FileNameExtensionFilter filter = new FileNameExtensionFilter("Certificate File", "cer");
-                    fileChooser.setFileFilter(filter);
-
-                    int userSelection = fileChooser.showSaveDialog(parentFrame);
-
-                    if (userSelection == JFileChooser.APPROVE_OPTION) {
-                        File fileToSave = fileChooser.getSelectedFile();
-                        System.out.println("Save as file: " + fileToSave.getAbsolutePath());
-
-                        CertificateGenerator.exportCertificate(selfSignedX509Certificate, fileToSave.getAbsolutePath());
-                        JOptionPane.showMessageDialog(this, "Root Certificate Exported Successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-                    }
-                    else {
-                        System.out.println("Save command cancelled by user.");
-                    }
-                }
-                catch (Exception e1) {
-                    e1.printStackTrace();
-                    JOptionPane.showMessageDialog(this, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
+                exportCertificate(selfSignedX509Certificate);
             }
-
-
-
-
         });
 
 
@@ -135,11 +112,73 @@ public class FrmGenerateCertificate extends JFrame {
         btnExportClientCertificate.setBounds(300, 220, 190, 30);
         add(btnExportClientCertificate);
 
+        JButton btnBack = new JButton("Back");
+        btnBack.setBounds(170, 280, 150, 30);
+        add(btnBack);
 
+        btnGenerateClientCertificate.addActionListener(e -> {
 
+            if (txtClientEmail.getText().trim().isEmpty() || txtClientSubject.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Please fill all fields");
+            } else {
+                try {
+                    certificateSignedX509Certificate = CertificateGenerator.generateCertificateSignedX509Certificate(txtClientEmail.getText(), txtClientSubject.getText(), serialNumber, CertificateGenerator.privateKey);
+                    serialNumber++;
+                    JOptionPane.showMessageDialog(this, "Client Certificate Generated Successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    System.out.println(certificateSignedX509Certificate);
+                }
+                catch (CertificateEncodingException | InvalidKeyException | NoSuchProviderException |
+                       NoSuchAlgorithmException | SignatureException ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
 
+        btnExportClientCertificate.addActionListener(e -> {
+            if (certificateSignedX509Certificate == null) {
+                JOptionPane.showMessageDialog(this, "Please Generate Client Certificate First", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            else {
+                exportCertificate(certificateSignedX509Certificate);
+            }
+        });
 
+        btnBack.addActionListener(e -> {
+            new FrmMain().setVisible(true);
+            dispose();
+        });
 
+    }
+
+    void exportCertificate(X509Certificate certificate){
+        try {
+            // parent component of the dialog
+            JFrame parentFrame = new JFrame();
+
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Specify a file to save");
+            fileChooser.setAcceptAllFileFilterUsed(false);
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("Certificate File", "cer");
+            fileChooser.setFileFilter(filter);
+
+            int userSelection = fileChooser.showSaveDialog(parentFrame);
+
+            if (userSelection == JFileChooser.APPROVE_OPTION) {
+                File fileToSave = fileChooser.getSelectedFile();
+                System.out.println("Save as file: " + fileToSave.getAbsolutePath());
+
+                CertificateGenerator.exportCertificate(certificate, fileToSave.getAbsolutePath());
+                JOptionPane.showMessageDialog(this, "Root Certificate Exported Successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+            }
+            else {
+                System.out.println("Save command cancelled by user.");
+            }
+        }
+        catch (Exception e1) {
+            e1.printStackTrace();
+            JOptionPane.showMessageDialog(this, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public static void main(String[] args) {

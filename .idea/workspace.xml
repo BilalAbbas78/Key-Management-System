@@ -4,13 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bac79d80-73cc-4be5-89ac-bb6b18437091" name="Changes" comment="Initial Commit">
-      <change afterPath="$PROJECT_DIR$/src/CertificateGenerator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/FrmGenerateCertificate.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/FrmMain.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/FrmVerifyCertificate.java" afterDir="false" />
+    <list default="true" id="bac79d80-73cc-4be5-89ac-bb6b18437091" name="Changes" comment="Generate Certificate added">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Key Management System.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Key Management System.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CertificateGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/CertificateGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FrmGenerateCertificate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FrmGenerateCertificate.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,7 +75,7 @@
       <updated>1661228796274</updated>
       <workItem from="1661228797869" duration="666000" />
       <workItem from="1661229495046" duration="4000" />
-      <workItem from="1661229518353" duration="6082000" />
+      <workItem from="1661229518353" duration="7985000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1661228895591</created>
@@ -87,7 +84,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661228895591</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Generate Certificate added">
+      <created>1661235844863</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1661235844863</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -106,6 +110,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial Commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="Initial Commit" />
+    <MESSAGE value="Generate Certificate added" />
+    <option name="LAST_COMMIT_MESSAGE" value="Generate Certificate added" />
   </component>
 </project>

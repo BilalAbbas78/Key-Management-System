@@ -21,6 +21,7 @@ import java.util.Date;
 public class CertificateGenerator {
 
     static PublicKey publicKey;
+    static PrivateKey privateKey;
 
     public static X509Certificate generateSelfSignedX509Certificate(String issuerName, String issuerSubject) throws CertificateEncodingException, InvalidKeyException, IllegalStateException,
             NoSuchProviderException, NoSuchAlgorithmException, SignatureException {
@@ -49,6 +50,7 @@ public class CertificateGenerator {
                 new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping));
 
         // finally, sign the certificate with the private key of the same KeyPair
+        privateKey = keyPair.getPrivate();
         return certGen.generate(keyPair.getPrivate(), "BC");
     }
 
@@ -80,7 +82,7 @@ public class CertificateGenerator {
         os.close();
     }
 
-    public X509Certificate generateCertificateSignedX509Certificate(String clientName, String clientSubject, PrivateKey issuerPrivateKey) throws CertificateEncodingException, InvalidKeyException, IllegalStateException,
+    public static X509Certificate generateCertificateSignedX509Certificate(String clientName, String clientSubject, int serialNumber, PrivateKey issuerPrivateKey) throws CertificateEncodingException, InvalidKeyException, IllegalStateException,
             NoSuchProviderException, NoSuchAlgorithmException, SignatureException {
         Security.addProvider(new BouncyCastleProvider());
 
@@ -93,9 +95,9 @@ public class CertificateGenerator {
         X509V3CertificateGenerator certGen = new X509V3CertificateGenerator();
 
         // add some options
-        certGen.setSerialNumber(BigInteger.valueOf(System.currentTimeMillis()));
-        certGen.setIssuerDN(new X500Principal(clientName)); // use the same
-        certGen.setSubjectDN(new X509Name(clientSubject));
+        certGen.setSerialNumber(BigInteger.valueOf(serialNumber));
+        certGen.setIssuerDN(new X500Principal("CN=" + clientName)); // use the same
+        certGen.setSubjectDN(new X509Name("DN=" + clientSubject));
         // yesterday
         certGen.setNotBefore(new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000));
         // in 2 years
