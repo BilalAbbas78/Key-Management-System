@@ -76,7 +76,7 @@ public class FrmGenerateCertificate extends JFrame {
             }
             else {
                 try {
-                    selfSignedX509Certificate = CertificateGenerator.generateSelfSignedX509Certificate(txtIssuer.getText().trim());
+                    selfSignedX509Certificate = CertificateGenerator.generateSelfSignedX509Certificate(txtIssuer.getText().trim(), datePicker.getModel().getValue().toString(), datePicker1.getModel().getValue().toString());
                     serialNumber = 1;
                     JOptionPane.showMessageDialog(this, "Root Certificate Generated Successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
 //                System.out.println(selfSignedX509Certificate);

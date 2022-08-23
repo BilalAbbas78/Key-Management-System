@@ -17,6 +17,8 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @SuppressWarnings("ALL")
@@ -25,9 +27,14 @@ public class CertificateGenerator {
     static PublicKey publicKey;
     static PrivateKey privateKey;
 
-    public static X509Certificate generateSelfSignedX509Certificate(String issuerName) throws CertificateEncodingException, InvalidKeyException, IllegalStateException,
-            NoSuchProviderException, NoSuchAlgorithmException, SignatureException {
+    public static X509Certificate generateSelfSignedX509Certificate(String issuerName, String from, String to) throws CertificateEncodingException, InvalidKeyException, IllegalStateException,
+            NoSuchProviderException, NoSuchAlgorithmException, SignatureException, ParseException {
         Security.addProvider(new BouncyCastleProvider());
+
+        SimpleDateFormat parser = new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy");
+//        Date date = parser.parse(input);
+        Date fromDate = parser.parse(from);
+        Date toDate = parser.parse(to);
 
         // generate a key pair
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", "BC");
@@ -42,9 +49,9 @@ public class CertificateGenerator {
         certGen.setIssuerDN(new X500Principal("CN=" + issuerName)); // use the same
         certGen.setSubjectDN(new X509Name("DN=" + issuerName));
         // yesterday
-        certGen.setNotBefore(new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000));
+        certGen.setNotBefore(fromDate);
         // in 2 years
-        certGen.setNotAfter(new Date(System.currentTimeMillis() + 2L * 365 * 24 * 60 * 60 * 1000));
+        certGen.setNotAfter(toDate);
         certGen.setPublicKey(keyPair.getPublic());
         publicKey = keyPair.getPublic();
         certGen.setSignatureAlgorithm("SHA256WithRSAEncryption");
