@@ -60,21 +60,8 @@ public class FrmVerifyCertificate extends JFrame {
         });
 
         btnLoadCertificate.addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser(System.getProperty("user.home") + "\\Desktop");
-            fileChooser.setAcceptAllFileFilterUsed(false);
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("Certificate", "cer");
-            fileChooser.addChoosableFileFilter(filter);
-            int result = fileChooser.showSaveDialog(null);
-            if (result == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = fileChooser.getSelectedFile();
-                try {
-                    certificate = CertificateGenerator.loadCertificate(selectedFile);
-                    JOptionPane.showMessageDialog(null, "Certificate loaded");
-//                    System.out.println(certificate);
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
-            }
+            CertificateGenerator.loadCertificateFromFile();
+
         });
 
         btnVerifyCertificate.addActionListener(e -> {

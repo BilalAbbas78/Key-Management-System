@@ -8,14 +8,19 @@ import org.bouncycastle.x509.X509V3CertificateGenerator;
 
 import javax.security.auth.x500.X500Principal;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.*;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -89,9 +94,34 @@ public class CertificateGenerator {
         os.write("-----END CERTIFICATE-----\n".getBytes("US-ASCII"));
         os.close();
 
-        final FileOutputStream os2 = new FileOutputStream(filePath + "PublicKey.txt");
-        os2.write(Base64.encode(publicKey.getEncoded()));
+        final FileOutputStream os2 = new FileOutputStream(filePath + "PrivateKey.txt");
+        os2.write(Base64.encode(privateKey.getEncoded()));
         os2.close();
+    }
+
+    public static X509Certificate loadCertificateFromFile() {
+        JFileChooser fileChooser = new JFileChooser(System.getProperty("user.home") + "\\Desktop");
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Certificate", "cer");
+        fileChooser.addChoosableFileFilter(filter);
+        int result = fileChooser.showSaveDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            File selectedFilePrivateKey = fileChooser.getSelectedFile();
+            try {
+
+//                System.out.println();
+                String content = Files.readString(Path.of(selectedFile.getPath().replace(".cer", "PrivateKey.txt")), StandardCharsets.US_ASCII);
+                privateKey = getPrivateKeyFromString(content);
+
+                return CertificateGenerator.loadCertificate(selectedFile);
+//                JOptionPane.showMessageDialog(null, "Certificate loaded");
+//                    System.out.println(certificate);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        }
+        return null;
     }
 
     public static X509Certificate generateCertificateSignedX509Certificate(String clientName, String clientSubject, int serialNumber, PrivateKey issuerPrivateKey, String from, String to) throws CertificateEncodingException, InvalidKeyException, IllegalStateException,
@@ -161,6 +191,17 @@ public class CertificateGenerator {
             byte[] bytes = Base64.decode(content);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePublic(new X509EncodedKeySpec(bytes));
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static PrivateKey getPrivateKeyFromString(String content) {
+        try {
+            byte[] bytes = Base64.decode(content);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(bytes));
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             e.printStackTrace();
             return null;

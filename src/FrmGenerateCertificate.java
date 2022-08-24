@@ -14,6 +14,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class FrmGenerateCertificate extends JFrame {
 
@@ -24,7 +25,7 @@ public class FrmGenerateCertificate extends JFrame {
 
     FrmGenerateCertificate(){
         setTitle("Generate Certificate");
-        setSize(550, 450);
+        setSize(550, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -48,9 +49,9 @@ public class FrmGenerateCertificate extends JFrame {
 
         UtilDateModel model = new UtilDateModel();
         JDatePanelImpl datePanel = new JDatePanelImpl(model, new Properties());
-        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
-        datePicker.setBounds(25, 140, 120, 30);
-        add(datePicker);
+        AtomicReference<JDatePickerImpl> datePicker = new AtomicReference<>(new JDatePickerImpl(datePanel, new DateLabelFormatter()));
+        datePicker.get().setBounds(25, 140, 120, 30);
+        add(datePicker.get());
 
         JLabel lblIssuerToDate = new JLabel("To Date");
         lblIssuerToDate.setBounds(25, 170, 190, 30);
@@ -70,6 +71,10 @@ public class FrmGenerateCertificate extends JFrame {
         btnExportRootCertificate.setBounds(25, 280, 190, 30);
         add(btnExportRootCertificate);
 
+        JButton btnLoadRootCertificate = new JButton("Load Root Certificate");
+        btnLoadRootCertificate.setBounds(25, 320, 190, 30);
+        add(btnLoadRootCertificate);
+
         btnGenerateRootCertificate.addActionListener(e -> {
 
             if (txtIssuer.getText().trim().isEmpty()) {
@@ -77,7 +82,7 @@ public class FrmGenerateCertificate extends JFrame {
             }
             else {
                 try {
-                    selfSignedX509Certificate = CertificateGenerator.generateSelfSignedX509Certificate(txtIssuer.getText().trim(), datePicker.getModel().getValue().toString(), datePicker1.getModel().getValue().toString());
+                    selfSignedX509Certificate = CertificateGenerator.generateSelfSignedX509Certificate(txtIssuer.getText().trim(), datePicker.get().getModel().getValue().toString(), datePicker1.getModel().getValue().toString());
                     serialNumber = 1;
                     JOptionPane.showMessageDialog(this, "Root Certificate Generated Successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
 //                System.out.println(selfSignedX509Certificate);
@@ -98,6 +103,30 @@ public class FrmGenerateCertificate extends JFrame {
             else {
                 exportCertificate(selfSignedX509Certificate);
             }
+        });
+
+        btnLoadRootCertificate.addActionListener(e -> {
+            selfSignedX509Certificate = CertificateGenerator.loadCertificateFromFile();
+            JOptionPane.showMessageDialog(null, "Certificate loaded successfully");
+            assert selfSignedX509Certificate != null;
+            txtIssuer.setText(selfSignedX509Certificate.getIssuerX500Principal().getName().replaceFirst("CN=", ""));
+
+
+
+
+
+//            try {
+//                datePicker.set(new JDatePickerImpl(datePanel, (JFormattedTextField.AbstractFormatter) new DateLabelFormatter().stringToValue(selfSignedX509Certificate.getNotBefore().toString())));
+//            } catch (ParseException ex) {
+//                throw new RuntimeException(ex);
+//            }
+
+//            try {
+//                SimpleDateFormat parser = new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy");
+//                datePicker.getModel().setValue(selfSignedX509Certificate.getNotBefore());
+//            } catch (ParseException ex) {
+//                throw new RuntimeException(ex);
+//            }
         });
 
 
@@ -143,9 +172,13 @@ public class FrmGenerateCertificate extends JFrame {
         btnExportClientCertificate.setBounds(300, 280, 190, 30);
         add(btnExportClientCertificate);
 
-        JButton btnBack = new JButton("Back");
-        btnBack.setBounds(170, 320, 150, 30);
-        add(btnBack);
+        JButton btnLoadClientCertificate = new JButton("Load Client Certificate");
+        btnLoadClientCertificate.setBounds(300, 320, 190, 30);
+        add(btnLoadClientCertificate);
+
+        JButton btnVerify = new JButton("Verify");
+        btnVerify.setBounds(170, 360, 150, 30);
+        add(btnVerify);
 
         btnGenerateClientCertificate.addActionListener(e -> {
 
@@ -178,9 +211,26 @@ public class FrmGenerateCertificate extends JFrame {
             }
         });
 
-        btnBack.addActionListener(e -> {
-            new FrmMain().setVisible(true);
-            dispose();
+        btnLoadClientCertificate.addActionListener(e -> {
+
+            certificateSignedX509Certificate = CertificateGenerator.loadCertificateFromFile();
+            JOptionPane.showMessageDialog(null, "Certificate loaded successfully");
+            assert certificateSignedX509Certificate != null;
+            txtClientSubject.setText(certificateSignedX509Certificate.getSubjectDN().getName().replaceFirst("DNQ=", ""));
+
+//            certificateSignedX509Certificate = CertificateGenerator.loadCertificateFromFile();
+        } );
+
+        btnVerify.addActionListener(e -> {
+            if (certificateSignedX509Certificate == null || selfSignedX509Certificate == null) {
+                JOptionPane.showMessageDialog(null, "Please load certificates first");
+            }
+            else {
+                CertificateGenerator.verifyCertificate(certificateSignedX509Certificate, selfSignedX509Certificate.getPublicKey());
+            }
+
+//            new FrmMain().setVisible(true);
+//            dispose();
         });
 
     }

@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bac79d80-73cc-4be5-89ac-bb6b18437091" name="Changes" comment="Date added in Issuer">
+    <list default="true" id="bac79d80-73cc-4be5-89ac-bb6b18437091" name="Changes" comment="GUI Set">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/CertificateGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/CertificateGenerator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/FrmGenerateCertificate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FrmGenerateCertificate.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FrmMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FrmMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FrmVerifyCertificate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FrmVerifyCertificate.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,28 +36,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/Syed Bilal Abbas/IdeaProjects/Key Management System/src",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Syed Bilal Abbas/IdeaProjects/Key Management System/src&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Syed Bilal Abbas\IdeaProjects\Key Management System\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.FrmVerifyCertificate">
+  <component name="RunManager" selected="Application.FrmGenerateCertificate">
     <configuration name="FrmGenerateCertificate" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="FrmGenerateCertificate" />
       <module name="Key Management System" />
@@ -81,9 +81,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.FrmVerifyCertificate" />
         <item itemvalue="Application.FrmGenerateCertificate" />
         <item itemvalue="Application.FrmMain" />
+        <item itemvalue="Application.FrmVerifyCertificate" />
       </list>
     </recent_temporary>
   </component>
@@ -98,7 +98,9 @@
       <workItem from="1661228797869" duration="666000" />
       <workItem from="1661229495046" duration="4000" />
       <workItem from="1661229518353" duration="10695000" />
-      <workItem from="1661283648489" duration="6302000" />
+      <workItem from="1661283648489" duration="6811000" />
+      <workItem from="1661311197058" duration="1771000" />
+      <workItem from="1661314656963" duration="2668000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1661228895591</created>
@@ -135,7 +137,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661288838471</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="GUI Set">
+      <created>1661290243537</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1661290243537</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -158,6 +167,7 @@
     <MESSAGE value="Export Certificate added" />
     <MESSAGE value="JDatePicker Classes added" />
     <MESSAGE value="Date added in Issuer" />
-    <option name="LAST_COMMIT_MESSAGE" value="Date added in Issuer" />
+    <MESSAGE value="GUI Set" />
+    <option name="LAST_COMMIT_MESSAGE" value="GUI Set" />
   </component>
 </project>
